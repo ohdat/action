@@ -28,10 +28,6 @@ function hashFile(filePath) {
     return hashString(fs.readFileSync(filePath).toString());
 }
 
-function addToken(url, token) {
-    return url.replace(/^https:\/\//, `https://x-access-token:${token}@`);
-}
-
 async function main() {
     await core.group('install pre-commit', async () => {
         await exec.exec('pip', ['install', 'pre-commit']);
@@ -44,9 +40,8 @@ async function main() {
         '--color=always',
         ...tr.argStringToArray(core.getInput('extra_args')),
     ];
-    const token = core.getInput('token');
     const pr = github.context.payload.pull_request;
-    const push = !!token && !!pr;
+    const push = !!pr;
 
     const cachePaths = [path.join(os.homedir(), '.cache', 'pre-commit')];
     const py = getPythonVersion();
@@ -85,13 +80,8 @@ async function main() {
                 await exec.exec(
                     'git', ['config', 'user.email', 'pre-commit@ohdat.io']
                 );
-
-                // const branch = pr.head.ref;
-                // await exec.exec('git', ['checkout', 'HEAD', '-B', branch]);
-
                 await exec.exec('git', ['commit', '-am', 'pre-commit fixes']);
-                const url = addToken(pr.head.repo.clone_url, token);
-                await exec.exec('git', ['push',url]);
+                await exec.exec('git', ['push']);
             });
         }
     }
