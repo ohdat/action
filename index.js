@@ -83,15 +83,15 @@ async function main() {
             await core.group('push fixes', async () => {
                 await exec.exec('git', ['config', 'user.name', 'pre-commit']);
                 await exec.exec(
-                    'git', ['config', 'user.email', 'pre-commit@example.com']
+                    'git', ['config', 'user.email', 'pre-commit@ohdat.io']
                 );
 
-                const branch = pr.head.ref;
-                await exec.exec('git', ['checkout', 'HEAD', '-B', branch]);
+                // const branch = pr.head.ref;
+                // await exec.exec('git', ['checkout', 'HEAD', '-B', branch]);
 
                 await exec.exec('git', ['commit', '-am', 'pre-commit fixes']);
-                const url = addToken(pr.head.repo.clone_url, token);
-                await exec.exec('git', ['push', url, 'HEAD']);
+                // const url = addToken(pr.head.repo.clone_url, token);
+                await exec.exec('git', ['push']);
             });
         }
     }
